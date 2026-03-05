@@ -1,0 +1,9 @@
+scripts
+\.DS_Store
+\.git
+\.gitignore
+README\.md
+.*\.bak$
+Brewfile
+Brewfile\.extra
+zprofile\.template

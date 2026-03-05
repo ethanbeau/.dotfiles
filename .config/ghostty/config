@@ -1,0 +1,147 @@
+########################################
+# Theme / Color / Rendering
+########################################
+theme = dark:niji,light:adwaita
+window-theme = auto
+
+background-opacity = 0.85
+background-blur-radius = 18
+background-opacity-cells = true
+window-colorspace = display-p3
+macos-icon = custom
+
+
+########################################
+# macOS Windowing
+########################################
+# transparent
+# macos-titlebar-style = hidden
+macos-option-as-alt = true
+macos-non-native-fullscreen = padded-notch
+
+
+########################################
+# Layout / Geometry
+########################################
+window-padding-balance = true
+
+window-width  = 120
+window-height = 120
+
+# window-position-x = 0
+# window-position-y = 0
+
+resize-overlay = never
+window-vsync = true
+
+
+########################################
+# State / Lifecycle
+########################################
+window-save-state = always
+quit-after-last-window-closed = true
+
+
+########################################
+# Typography
+########################################
+font-family = "Fira Code Nerd Font"
+font-size = 15
+font-feature = "calt"
+font-thicken=true
+font-thicken-strength=1
+adjust-cell-height=1
+
+
+########################################
+# Cursor
+########################################
+cursor-style-blink = false
+# cursor-style = block | beam | underline
+
+
+########################################
+# Input / Clipboard / Mouse
+########################################
+mouse-hide-while-typing = true
+mouse-scroll-multiplier = 2
+
+right-click-action = copy-or-paste
+
+clipboard-paste-protection = true
+clipboard-paste-bracketed-safe = true
+clipboard-trim-trailing-spaces = true
+
+selection-clear-on-copy = true
+
+
+########################################
+# Links
+########################################
+link-previews = osc8
+# link-url = false
+
+
+########################################
+# Splits / Focus Clarity
+########################################
+unfocused-split-opacity = 0.92
+# split-divider-color = #2a2a2a
+
+
+########################################
+# Shell Integration
+########################################
+shell-integration-features = no-cursor,sudo,no-title
+
+
+########################################
+# Scrollback
+########################################
+scrollback-limit = 1000000
+
+
+########################################
+# Notifications (GTK-only; macOS-safe)
+########################################
+app-notifications = false
+
+
+########################################
+# Behavior
+########################################
+confirm-close-surface = false
+
+quick-terminal-position = bottom
+quick-terminal-animation-duration = 0
+quick-terminal-screen = mouse
+quick-terminal-autohide = true
+quick-terminal-space-behavior = move
+
+
+########################################
+# Keybinds
+########################################
+keybind = global:alt+grave_accent=toggle_quick_terminal
+
+keybind = cmd+alt+backspace=clear_screen
+keybind = cmd+alt+u=copy_url_to_clipboard
+keybind = cmd+alt+s=write_scrollback_file:open
+
+keybind = cmd+alt+t=toggle_window_float_on_top
+keybind = shift+enter=text:\x1b\r
+
+# Safety / recovery
+keybind = cmd+alt+shift+s=toggle_secure_input
+keybind = cmd+alt+shift+r=reset
+
+# Split
+keybind = opt+h=goto_split:left
+keybind = opt+j=goto_split:bottom	
+keybind = opt+k=goto_split:top
+keybind = opt+l=goto_split:right
+
+keybind = opt+shift+h=new_split:left
+keybind = opt+shift+j=new_split:down
+keybind = opt+shift+k=new_split:up
+keybind = opt+shift+l=new_split:right

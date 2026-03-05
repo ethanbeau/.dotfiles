@@ -1,0 +1,44 @@
+# Keep the prompt on a single line
+add_newline = false
+
+# EXPLICIT FORMAT: This completely removes all "bloat" by only loading these exact 4 modules
+format = "$directory$git_branch$git_status$character"
+
+# Puts the time on the far right side of your terminal
+right_format = "$time"
+
+[directory]
+# Applies to the entire path natively
+style = "bold cyan"
+format = "[$path]($style) "
+truncation_length = 1
+fish_style_pwd_dir_length = 1
+truncate_to_repo = false
+
+[git_branch]
+# Changed to a deep dark pink
+style = "purple"
+format = "[$branch]($style) "
+symbol = ""
+
+[git_status]
+style = "#61B221"
+format = "[$all_status$ahead_behind]($style) "
+
+stashed = "*"
+modified = "!"
+staged = "+"
+untracked = "?"
+conflicted = "="
+ahead = "⇡"
+behind = "⇣"
+
+[character]
+success_symbol = "[❯](bold green)"
+error_symbol = "[❯](bold red)"
+
+[time]
+disabled = false
+time_format = "%T"
+style = "bright-black"
+format = "[$time]($style)"

@@ -1,0 +1,31 @@
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
+# =============================================================================
+# ENV VARS
+# =============================================================================
+export VOLTA_HOME="$HOME/.volta"
+export HOMEBREW_NO_ENV_HINTS=1
+export PNPM_HOME="$HOME/Library/pnpm"
+export BAT_THEME="TwoDark"
+export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+export EDITOR="nvim"
+export GIT_WORKTREE_DIR="$HOME/code/projects/.worktrees"
+
+# =============================================================================
+# PATH
+# =============================================================================
+# Tell Zsh to keep the $path array tied to $PATH, and (-U) keep elements Unique
+typeset -U PATH path
+
+# Prepend
+path=(
+  "$VOLTA_HOME/bin"
+  "$PNPM_HOME"
+  $path
+)
+# Append
+path=(
+  $path
+)
+# Export the final result just to be safe
+export PATH

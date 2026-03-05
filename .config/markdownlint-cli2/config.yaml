@@ -1,0 +1,10 @@
+# Markdownlint configuration
+# https://github.com/DavidAnson/markdownlint-cli2
+
+config:
+  # Disable line length rule
+  MD013: false
+  # Disable first-line-heading rule (common for Obsidian notes)
+  MD041: false
+  # Disable ol-prefix rule
+  MD029: false
