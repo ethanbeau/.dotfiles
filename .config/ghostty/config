@@ -57,6 +57,7 @@ adjust-cell-height=1
 # Cursor
 ########################################
 cursor-style-blink = false
+cursor-click-to-move = false
 # cursor-style = block | beam | underline
 
 
