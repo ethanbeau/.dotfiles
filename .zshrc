@@ -25,7 +25,11 @@ alias ...="cd ../.."
 alias ....="cd ../../.."
 
 alias grep="rg"
+alias GREP="\grep"
 alias find="fd"
+alias FIND="\find"
+alias du="dust"
+alias DU="\du"
 
 alias c="pbcopy"
 alias p="pbpaste"
@@ -41,7 +45,7 @@ alias gd="git diff"
 
 alias v="nvim"
 alias vim="nvim"
-alias rvim="\vim"
+alias VIM="\vim"
 alias mkdir="mkdir -p"
 alias python="python3"
 alias pip="pip3"
@@ -96,7 +100,7 @@ else
   alias lS="eza -1"
 
   alias cat="bat"
-  alias rcat="\cat"
+  alias CAT="\cat"
 
   alias ff="fzf --ansi --disabled --prompt 'Grep> ' \
     --bind 'start:reload(rg --color=always --line-number --no-heading --smart-case \"\" || true)' \
