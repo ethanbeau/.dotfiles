@@ -14,6 +14,7 @@ brew "lazygit"
 brew "linearmouse"
 brew "mactop"
 brew "mcat"
+brew "middledrag"
 brew "mq"
 brew "nmap"
 brew "postgresql@14", restart_service: :changed
