@@ -176,7 +176,7 @@ fif() {
 }
 
 kport() {
-  local port-"$1"
+  local port="$1"
   lsof -tiTCP:"$port" -sTCP:LISTEN | xargs kill -9
 }
 
