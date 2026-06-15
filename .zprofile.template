@@ -19,6 +19,7 @@ typeset -U PATH path
 
 # Prepend
 path=(
+  "$HOME/.local/bin"
   "$VOLTA_HOME/bin"
   "$PNPM_HOME"
   $path

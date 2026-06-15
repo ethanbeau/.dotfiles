@@ -60,6 +60,9 @@ alias copilot="GITHUB_COPILOT_CLI=1 copilot"
 alias gemini="GEMINI_CLI=1 gemini"
 alias claude="CLAUDE_CLI=1 claude"
 
+alias cc="claude"
+alias ccyolo="claude --permission-mode bypassPermissions"
+
 # =============================================================================
 # 4. ENVIRONMENT CHECK (Agent/IDE vs Human)
 # =============================================================================
@@ -186,3 +189,4 @@ kport() {
 # ==============================================================================
 [ -f "$HOME/.local/bin/env" ] && . "$HOME/.local/bin/env"
 [ -f ~/.secrets ] && source ~/.secrets
+

@@ -1,0 +1,50 @@
+// Zed keymap
+//
+// For information on binding keys, see the Zed
+// documentation: https://zed.dev/docs/key-bindings
+//
+// To see the default key bindings run `zed: open default keymap`
+// from the command palette.
+[
+  {
+    "context": "ProjectPanel && !GitPanel",
+    "bindings": {
+      "cmd-b": "workspace::ToggleRightDock",
+    },
+  },
+  {
+    "context": "!ProjectPanel",
+    "bindings": {
+      "cmd-b": "project_panel::ToggleFocus",
+    },
+  },
+  {
+    "context": "GitPanel && !ProjectPanel",
+    "bindings": {
+      "cmd-g": "workspace::ToggleRightDock",
+    },
+  },
+  {
+    "context": "!GitPanel",
+    "bindings": {
+      "cmd-g": "git_panel::ToggleFocus",
+    },
+  },
+  {
+    "context": "Workspace",
+    "bindings": {
+      "ctrl-/": "terminal_panel::ToggleFocus",
+      "cmd-alt-b": "workspace::ToggleLeftDock",
+      "alt-shift-h": "workspace::ActivatePaneLeft",
+      "alt-shift-j": "workspace::ActivatePaneDown",
+      "alt-shift-k": "workspace::ActivatePaneUp",
+      "alt-shift-l": "workspace::ActivatePaneRight",
+    },
+  },
+  {
+    "context": "Editor && vim_mode == insert && !menu",
+    "bindings": {
+      "j k": "vim::NormalBefore",
+    },
+  },
+]

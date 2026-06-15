@@ -1,0 +1,234 @@
+// Zed settings
+//
+// For information on how to configure Zed, see the Zed
+// documentation: [https://zed.dev/docs/configuring-zed](https://zed.dev/docs/configuring-zed)
+//
+// To see all of Zed's default settings without changing your
+// custom settings, run `zed: open default settings` from the
+// command palette.
+{
+  // Core behavior
+  "base_keymap": "VSCode",
+  "cli_default_open_behavior": "new_window",
+  "confirm_quit": true,
+
+  // Appearance
+  "theme": {
+    "mode": "system",
+    "light": "One Light",
+    "dark": "One Dark Pro Monokai Darker",
+  },
+  "icon_theme": {
+    "mode": "dark",
+    "light": "Zed (Default)",
+    "dark": "Material Icon Theme",
+  },
+  "ui_font_size": 14,
+  "buffer_font_family": "FiraCode Nerd Font",
+  "buffer_font_size": 13,
+  "buffer_line_height": "comfortable",
+  "buffer_font_features": {
+    "calt": true,
+  },
+
+  // Panels and layout
+  "project_panel": {
+    "dock": "right",
+  },
+  "outline_panel": {
+    "dock": "left",
+  },
+  "collaboration_panel": {
+    "dock": "left",
+  },
+  "git_panel": {
+    "dock": "right",
+  },
+  "tabs": {
+    "git_status": true,
+    "activate_on_close": "history",
+    "show_diagnostics": "all",
+    "file_icons": true,
+  },
+  "toolbar": {
+    "breadcrumbs": true,
+    "quick_actions": true,
+    "selections_menu": true,
+  },
+  "status_bar": {
+    "active_language_button": true,
+    "cursor_position_button": true,
+    "line_endings_button": true,
+    "active_encoding_button": "non_utf8",
+  },
+  "scrollbar": {
+    "show": "auto",
+    "diagnostics": "warning",
+    "git_diff": true,
+    "search_results": true,
+    "selected_text": true,
+    "selected_symbol": true,
+  },
+  "minimap": {
+    "show": "auto",
+  },
+
+  // Session and safety
+  "session": {
+    "restore_unsaved_buffers": true,
+    "trust_all_worktrees": false,
+  },
+  "autosave": {
+    "after_delay": {
+      "milliseconds": 1000,
+    },
+  },
+  "close_on_file_delete": true,
+
+  // Editing experience
+  "colorize_brackets": true,
+  "current_line_highlight": "all",
+  "selection_highlight": true,
+  "hide_mouse": "on_typing",
+  "hover_popover_enabled": true,
+  "show_completion_documentation": false,
+  "snippet_sort_order": "inline",
+  "auto_signature_help": true,
+  "show_signature_help_after_edits": true,
+  "inlay_hints": {
+    "enabled": true,
+    "show_type_hints": true,
+    "show_parameter_hints": true,
+    "show_other_hints": true,
+    "show_background": false,
+    "edit_debounce_ms": 700,
+    "scroll_debounce_ms": 50,
+  },
+
+  // File formatting and whitespace
+  "ensure_final_newline_on_save": true,
+  "remove_trailing_whitespace_on_save": true,
+  "line_ending": "prefer_lf",
+  "preferred_line_length": 80,
+  "wrap_guides": [80],
+
+  // AI and agents
+  "show_edit_predictions": true,
+  "edit_predictions": {
+    "disabled_globs": [
+      "**/.env*",
+      "**/*.pem",
+      "**/*.key",
+      "**/*.cert",
+      "**/*.crt",
+      "**/.dev.vars",
+      "**/secrets.yml",
+    ],
+  },
+  "agent_servers": {
+    "github-copilot-cli": {
+      "type": "registry",
+    },
+  },
+  "agent": {
+    "default_model": {
+      "provider": "openrouter",
+      "model": "openrouter/free",
+    },
+    "sidebar_side": "left",
+    "dock": "left",
+    "favorite_models": [],
+    "model_parameters": [],
+  },
+
+  // Extensions
+  "auto_install_extensions": {
+    "oxc": true,
+    "html": true,
+    "nix": true,
+    "toml": true,
+    "markdownlint": true,
+    "dockerfile": true,
+    "docker-compose": true,
+    "material-icon-theme": true,
+    "one-dark-pro-monokai-darker": true,
+    "one-light": true,
+  },
+
+  // Environment and terminal
+  "load_direnv": "direct",
+  "terminal": {
+    "detect_venv": {
+      "on": {
+        "directories": [".venv", "venv", ".env", "env"],
+        "activate_script": "default",
+      },
+    },
+  },
+
+  // Git
+  "git": {
+    "inline_blame": {
+      "enabled": true,
+      "min_column": 40,
+      "delay_ms": 0,
+      "show_commit_summary": true,
+    },
+  },
+
+  // Privacy
+  "telemetry": {
+    "diagnostics": false,
+    "metrics": false,
+  },
+
+  // Language-specific settings
+  "languages": {
+    "Python": {
+      "language_servers": ["ty", "ruff"],
+      "format_on_save": "on",
+      "formatter": [
+        { "language_server": { "name": "ruff" } },
+        { "code_action": "source.fixAll.ruff" },
+        { "code_action": "source.organizeImports.ruff" },
+      ],
+      "ensure_final_newline_on_save": true,
+      "remove_trailing_whitespace_on_save": true,
+    },
+
+    "JavaScript": {
+      "language_servers": ["oxc", "!vtsls", "..."],
+      "format_on_save": "on",
+      "formatter": "language_server",
+      "prettier": {
+        "allowed": false,
+      },
+      "ensure_final_newline_on_save": true,
+      "remove_trailing_whitespace_on_save": true,
+    },
+
+    "TypeScript": {
+      "language_servers": ["oxc", "!vtsls", "..."],
+      "format_on_save": "on",
+      "formatter": "language_server",
+      "prettier": {
+        "allowed": false,
+      },
+      "ensure_final_newline_on_save": true,
+      "remove_trailing_whitespace_on_save": true,
+    },
+
+    "TSX": {
+      "language_servers": ["oxc", "!vtsls", "..."],
+      "format_on_save": "on",
+      "formatter": "language_server",
+      "prettier": {
+        "allowed": false,
+      },
+    },
+
+    "Markdown": {
+      "format_on_save": "on",
+    },
+  },
+}
