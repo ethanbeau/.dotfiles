@@ -15,8 +15,8 @@
   // Appearance
   "theme": {
     "mode": "system",
-    "light": "One Light",
-    "dark": "One Dark Pro Monokai Darker",
+    "light": "Zedokai Light (Filter Sun)",
+    "dark": "Zedokai Darker (Filter Spectrum)",
   },
   "icon_theme": {
     "mode": "dark",
@@ -151,8 +151,7 @@
     "dockerfile": true,
     "docker-compose": true,
     "material-icon-theme": true,
-    "one-dark-pro-monokai-darker": true,
-    "one-light": true,
+    "zedokai": true,
   },
 
   // Environment and terminal

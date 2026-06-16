@@ -1,7 +1,7 @@
 ########################################
 # Theme / Color / Rendering
 ########################################
-theme = dark:niji,light:adwaita
+theme = dark:Monokai Pro Spectrum,light:Monokai Pro Light Sun
 window-theme = auto
 
 background-opacity = 0.85
