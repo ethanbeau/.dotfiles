@@ -19,8 +19,8 @@
     "dark": "Zedokai Darker (Filter Spectrum)",
   },
   "icon_theme": {
-    "mode": "dark",
-    "light": "Zed (Default)",
+    "mode": "system",
+    "light": "Material Icon Theme",
     "dark": "Material Icon Theme",
   },
   "ui_font_size": 15,
@@ -131,6 +131,7 @@
     },
   },
   "agent": {
+    "default_profile": "ask",
     "default_model": {
       "provider": "openrouter",
       "model": "openrouter/free",
@@ -147,6 +148,7 @@
     "html": true,
     "nix": true,
     "toml": true,
+    "env": true,
     "markdownlint": true,
     "dockerfile": true,
     "docker-compose": true,

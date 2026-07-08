@@ -15,7 +15,7 @@ macos-icon = custom
 # macOS Windowing
 ########################################
 # transparent
-macos-titlebar-style = hidden
+# macos-titlebar-style = hidden
 macos-option-as-alt = true
 macos-non-native-fullscreen = padded-notch
 
@@ -25,7 +25,7 @@ macos-non-native-fullscreen = padded-notch
 ########################################
 window-padding-balance = true
 window-padding-x = 10
-window-padding-y = 10
+window-padding-y = 0
 
 window-width  = 120
 window-height = 120
@@ -95,7 +95,7 @@ unfocused-split-opacity = 0.92
 ########################################
 # Shell Integration
 ########################################
-shell-integration-features = no-cursor,sudo,no-title
+shell-integration-features = no-cursor,sudo
 
 
 ########################################
@@ -113,7 +113,7 @@ app-notifications = false
 ########################################
 # Behavior
 ########################################
-confirm-close-surface = false
+confirm-close-surface = true
 
 quick-terminal-position = bottom
 quick-terminal-animation-duration = 0
@@ -140,7 +140,7 @@ keybind = cmd+alt+shift+r=reset
 
 # Split
 keybind = opt+h=goto_split:left
-keybind = opt+j=goto_split:bottom	
+keybind = opt+j=goto_split:bottom
 keybind = opt+k=goto_split:top
 keybind = opt+l=goto_split:right
 
@@ -148,3 +148,5 @@ keybind = opt+shift+h=new_split:left
 keybind = opt+shift+j=new_split:down
 keybind = opt+shift+k=new_split:up
 keybind = opt+shift+l=new_split:right
+
+keybind = opt+shift+f=toggle_split_zoom
