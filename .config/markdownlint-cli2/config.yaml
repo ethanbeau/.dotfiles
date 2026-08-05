@@ -4,7 +4,17 @@
 config:
   # Disable line length rule
   MD013: false
-  # Disable first-line-heading rule (common for Obsidian notes)
+
+  # Disable first-line-heading rule
   MD041: false
-  # Disable ol-prefix rule
+
+  # Disable ordered-list prefix rule
   MD029: false
+
+  # Permit duplicate headings under different parent headings
+  MD024:
+    siblings_only: true
+
+  # Keep tables compact
+  MD060:
+    style: compact
