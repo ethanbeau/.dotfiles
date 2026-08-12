@@ -42,6 +42,7 @@ alias gpo="git push origin"
 alias gl="git log --oneline --graph --decorate"
 alias gsw="git switch"
 alias gd="git diff"
+alias grs="git restore"
 
 alias v="nvim"
 alias vim="nvim"
@@ -49,8 +50,8 @@ alias VIM="\vim"
 alias mkdir="mkdir -p"
 alias python="python3"
 alias pip="pip3"
-alias zmxa="zmx attach"
 alias uuidgen="uuidgen | tr '[:upper:]' '[:lower:]'"
+alias lg="lazygit"
 
 alias reload="source ~/.zshrc && echo 'Reloaded .zshrc'"
 
@@ -62,6 +63,8 @@ alias claude="CLAUDE_CLI=1 claude"
 
 alias cc="claude"
 alias ccyolo="claude --permission-mode bypassPermissions"
+alias cx="codex"
+alias cxyolo="codex --yolo"
 
 # =============================================================================
 # 4. ENVIRONMENT CHECK (Agent/IDE vs Human)
@@ -190,3 +193,10 @@ kport() {
 [ -f "$HOME/.local/bin/env" ] && . "$HOME/.local/bin/env"
 [ -f ~/.secrets ] && source ~/.secrets
 
+
+# dcg: warn if hook was silently removed from Claude Code settings
+if command -v dcg &>/dev/null && command -v jq &>/dev/null; then
+  if [ -f "$HOME/.claude/settings.json" ] &&      ! jq -e '.hooks.PreToolUse[]? | select(.hooks[]?.command | test("dcg\"?$"))'        "$HOME/.claude/settings.json" &>/dev/null; then
+    printf '\033[1;33m[dcg] Hook missing from ~/.claude/settings.json — run: dcg install\033[0m\n'
+  fi
+fi
