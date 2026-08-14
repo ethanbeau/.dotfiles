@@ -196,16 +196,16 @@ _agent() {
 }
 
 # Claude
-cc()       { _agent claude default "$@" }
-ccstrict() { _agent claude strict  "$@" }
-ccauto()   { _agent claude auto    "$@" }
-ccyolo()   { _agent claude yolo    "$@" }
+cc()       { _agent claude default "$@"; }
+ccstrict() { _agent claude strict  "$@"; }
+ccauto()   { _agent claude auto    "$@"; }
+ccyolo()   { _agent claude yolo    "$@"; }
 
 # Codex
-cx()       { _agent codex default "$@" }
-cxstrict() { _agent codex strict  "$@" }
-cxauto()   { _agent codex auto    "$@" }
-cxyolo()   { _agent codex yolo    "$@" }
+cx()       { _agent codex default "$@"; }
+cxstrict() { _agent codex strict  "$@"; }
+cxauto()   { _agent codex auto    "$@"; }
+cxyolo()   { _agent codex yolo    "$@"; }
 
 # =============================================================================
 # 4. ENVIRONMENT CHECK (Agent/IDE vs Human)
