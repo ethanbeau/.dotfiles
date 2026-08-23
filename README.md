@@ -13,6 +13,7 @@ What `scripts/setup.sh` does:
 
 - Installs Homebrew (if missing)
 - Installs packages and apps from `Brewfile`
+- Imports Vorssaint preferences from `settings/vorssaint-settings.plist`
 - Creates `~/.config`
 - Symlinks dotfiles into `$HOME` with Stow
 
@@ -32,6 +33,7 @@ What `scripts/update.sh` does:
 ## Structure
 
 - `Brewfile` — CLI tools, taps, and apps
+- `settings/vorssaint-settings.plist` — Vorssaint preferences
 - `scripts/setup.sh` — first-time machine bootstrap
 - `scripts/update.sh` — routine package refresh
 

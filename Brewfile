@@ -1,4 +1,3 @@
-
 brew "atuin"
 brew "bat"
 brew "dust"
@@ -19,6 +18,7 @@ brew "rga"
 brew "starship"
 brew "stow"
 brew "tree"
+brew "vorssaint"
 brew "yazi"
 brew "zoxide"
 brew "zsh-autosuggestions"
