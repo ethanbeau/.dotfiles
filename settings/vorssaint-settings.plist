@@ -66,7 +66,7 @@
 		<key>clipboardHistoryLimit</key>
 		<integer>50</integer>
 		<key>clipboardHistoryShortcut</key>
-		<string>control+option+command:9</string>
+		<string>control+option+shift+command:9</string>
 		<key>clipboardHistoryShortcutEnabled</key>
 		<true/>
 		<key>clipboardHistorySkipSensitive</key>
@@ -632,7 +632,7 @@
 		<key>quickLauncherHiddenItems</key>
 		<string></string>
 		<key>quickLauncherShortcut</key>
-		<string>control+option+shift+command:9</string>
+		<string>control+option+shift+command:12</string>
 		<key>quickLauncherShortcutEnabled</key>
 		<true/>
 		<key>radialMenuActivationMode</key>
@@ -824,7 +824,7 @@
 		<key>switcherShowWindowlessFinder</key>
 		<true/>
 		<key>switcherSimpleMode</key>
-		<false/>
+		<true/>
 		<key>switcherWindowShortcut</key>
 		<string>command:50</string>
 		<key>switcherWindowlessApps</key>
