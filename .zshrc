@@ -60,71 +60,19 @@ alias codex="CODEX_CLI=1 codex"
 alias copilot="GITHUB_COPILOT_CLI=1 copilot"
 alias gemini="GEMINI_CLI=1 gemini"
 alias claude="CLAUDE_CLI=1 claude"
+alias opencode="OPENCODE_CLI=1 opencode"
+alias pi="PI_CLI=1 pi"
 
 # Coding harness aliases
 _agent() {
   local agent=$1 mode=$2
-  local tier effort
-  local -a args models
+  local -a args
 
   shift 2
-
-  # Optional model selector:
-  #
-  # 0      Haiku / Luna
-  # 1      Sonnet / Terra
-  # 2      Opus / Sol
-  #
-  # 0l     tier 0 + low effort
-  # 0m     tier 0 + medium effort
-  # 0h     tier 0 + high effort
-  # 0xh    tier 0 + xhigh effort
-  #
-  # No selector:
-  # use whatever model/effort the underlying CLI/config selects.
-
-  if (( $# )); then
-    case $1 in
-      [012])
-        tier=$1
-        shift
-        ;;
-      [012]l)
-        tier=${1[1]}
-        effort=low
-        shift
-        ;;
-      [012]m)
-        tier=${1[1]}
-        effort=medium
-        shift
-        ;;
-      [012]h)
-        tier=${1[1]}
-        effort=high
-        shift
-        ;;
-      [012]xh)
-        tier=${1[1]}
-        effort=xhigh
-        shift
-        ;;
-      [[:digit:]][[:alpha:]]*)
-        print -u2 "Invalid selector: $1"
-        print -u2 "Expected: {0|1|2}[l|m|h|xh]"
-        return 2
-        ;;
-    esac
-  fi
 
   case $agent in
     claude)
       args=(claude)
-      models=(haiku sonnet opus)
-
-      [[ -n $tier ]] &&
-        args+=(--model "${models[$(( tier + 1 ))]}")
-
       case $mode in
         default)
           # Preserve Claude's configured permission mode.
@@ -143,36 +91,19 @@ _agent() {
           return 2
           ;;
       esac
-
-      [[ -n $effort ]] &&
-        args+=(--effort "$effort")
-
       CLAUDE_CLI=1 command "${args[@]}" "$@"
       ;;
-
     codex)
       args=(codex)
-      models=(gpt-5.6-luna gpt-5.6-terra gpt-5.6-sol)
-
-      [[ -n $tier ]] &&
-        args+=(--model "${models[$(( tier + 1 ))]}")
-
       case $mode in
         default)
-          # Preserve Codex's configured approval + sandbox settings.
+          # Preserve Codex's configured approval and sandbox settings.
           ;;
         strict)
-          args+=(
-            --sandbox read-only
-            --ask-for-approval untrusted
-          )
+          args+=(--sandbox read-only --ask-for-approval untrusted)
           ;;
         auto)
-          args+=(
-            --sandbox workspace-write
-            --ask-for-approval on-request
-            -c 'approvals_reviewer="auto_review"'
-          )
+          args+=(--sandbox workspace-write --ask-for-approval on-request -c 'approvals_reviewer="auto_review"')
           ;;
         yolo)
           args+=(--yolo)
@@ -182,10 +113,6 @@ _agent() {
           return 2
           ;;
       esac
-
-      [[ -n $effort ]] &&
-        args+=(-c "model_reasoning_effort=\"$effort\"")
-
       CODEX_CLI=1 command "${args[@]}" "$@"
       ;;
     *)
@@ -196,21 +123,24 @@ _agent() {
 }
 
 # Claude
-cc()       { _agent claude default "$@"; }
-ccstrict() { _agent claude strict  "$@"; }
-ccauto()   { _agent claude auto    "$@"; }
-ccyolo()   { _agent claude yolo    "$@"; }
+cc() { _agent claude default "$@"; }
+ccstrict() { _agent claude strict "$@"; }
+ccauto() { _agent claude auto "$@"; }
+ccyolo() { _agent claude yolo "$@"; }
 
 # Codex
-cx()       { _agent codex default "$@"; }
-cxstrict() { _agent codex strict  "$@"; }
-cxauto()   { _agent codex auto    "$@"; }
-cxyolo()   { _agent codex yolo    "$@"; }
+cx() { _agent codex default "$@"; }
+cxstrict() { _agent codex strict "$@"; }
+cxauto() { _agent codex auto "$@"; }
+cxyolo() { _agent codex yolo "$@"; }
+
+# OpenCode (permission behavior is controlled by its config or --agent).
+oc() { OPENCODE_CLI=1 command opencode "$@"; }
 
 # =============================================================================
 # 4. ENVIRONMENT CHECK (Agent/IDE vs Human)
 # =============================================================================
-if [[ "$TERM" == "dumb" || "$TERM_PROGRAM" == "vscode" || -n "$VSCODE_INJECTION" || -n "$CLAUDE_CLI" || -n "$GITHUB_COPILOT_CLI" || -n "$GEMINI_CLI" || -n "$CODEX_CLI" ]]; then
+if [[ "$TERM" == "dumb" || "$TERM_PROGRAM" == "vscode" || -n "$VSCODE_INJECTION" || -n "$CLAUDE_CLI" || -n "$GITHUB_COPILOT_CLI" || -n "$GEMINI_CLI" || -n "$CODEX_CLI" || -n "$OPENCODE_CLI" || -n "$PI_CLI" ]]; then
 
   # --- AGENT / IDE MODE ---
   # Keep it as plain and POSIX-compliant as possible
