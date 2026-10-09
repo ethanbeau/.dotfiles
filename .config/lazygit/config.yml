@@ -1,0 +1,11 @@
+git:
+  diffRenderers:
+    - colorArg: always
+      command: delta --dark --hunk-header-style=syntax --hunk-header-decoration-style=blue --paging=never
+
+gui:
+  showIcons: true
+
+os:
+  editPreset: nvim
+  editAtLine: true
