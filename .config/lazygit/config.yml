@@ -1,7 +1,7 @@
 git:
   diffRenderers:
     - colorArg: always
-      command: delta --hunk-header-style=syntax --hunk-header-decoration-style=blue --paging=never
+      command: $HOME/.local/bin/lazygit-delta --hunk-header-style=syntax --hunk-header-decoration-style=blue --paging=never
 
 gui:
   showIcons: true
