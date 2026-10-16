@@ -1,13 +1,9 @@
-tap "jesseduffield/lazygit"
 tap "schpet/tap"
-tap "xykong/tap"
-brew "cloudflared"
 brew "ffmpeg"
 brew "gh"
 brew "grandperspective"
 brew "lazygit"
 brew "mactop"
-brew "postgresql@14", restart_service: :changed
 brew "rust"
 brew "uv"
 brew "vite-plus"
