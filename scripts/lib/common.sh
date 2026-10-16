@@ -162,6 +162,22 @@ validate_config_home() {
   [[ "$CONFIG_HOME" == /* && "$CONFIG_HOME" != *$'\n'* ]] || die 'XDG_CONFIG_HOME must be an absolute path without newlines'
 }
 
+validate_config_targets() {
+  local config_home="$1" package source_dir target relative
+  shift
+  for package in "$@"; do
+    source_dir="$DOTFILES_DIR/packages/$package/.config"
+    [[ -d "$source_dir" ]] || continue
+    while IFS= read -r -d '' source_dir; do
+      relative="${source_dir#"$DOTFILES_DIR/packages/$package/.config/"}"
+      target="$config_home/$relative"
+      if [[ -L "$target" ]]; then
+        die "Config target is a symlink: $target -> $(readlink "$target"). Move or remove it before Stow; this package manages files inside a real directory."
+      fi
+    done < <(find "$DOTFILES_DIR/packages/$package/.config" -mindepth 1 -type d -print0)
+  done
+}
+
 stow_packages() {
   local operation="$1" config_home="$2" package
   shift 2
@@ -170,6 +186,10 @@ stow_packages() {
     options+=(--adopt --restow)
   else
     options+=(--delete)
+  fi
+
+  if [[ "$operation" == install ]]; then
+    validate_config_targets "$config_home" "$@"
   fi
 
   for package in "$@"; do
