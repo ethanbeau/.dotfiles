@@ -10,3 +10,6 @@ source "$HOME/.dotfiles/zsh/aliases.zsh"
 source "$HOME/.dotfiles/zsh/interactive.zsh"
 source "$HOME/.dotfiles/zsh/completions.zsh"
 source "$HOME/.dotfiles/zsh/local.zsh"
+
+# Vite+ bin (https://viteplus.dev)
+. "$HOME/.config/vite-plus/env"
