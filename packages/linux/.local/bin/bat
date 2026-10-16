@@ -1,0 +1,7 @@
+#!/bin/sh
+# Native package names differ on Debian/Ubuntu.
+for binary in /usr/bin/bat /usr/local/bin/bat /usr/bin/batcat; do
+  if [ -x "$binary" ]; then exec "$binary" "$@"; fi
+done
+printf '%s\n' 'bat: native package is not installed' >&2
+exit 127

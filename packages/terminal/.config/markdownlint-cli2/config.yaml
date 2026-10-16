@@ -1,0 +1,23 @@
+# Markdownlint configuration
+# https://github.com/DavidAnson/markdownlint-cli2
+
+config:
+  # Disable line length rule
+  MD013: false
+
+  # Disable fenced code block style rule
+  MD040: false
+
+  # Disable first-line-heading rule
+  MD041: false
+
+  # Disable ordered-list prefix rule
+  MD029: false
+
+  # Permit duplicate headings under different parent headings
+  MD024:
+    siblings_only: true
+
+  # Keep tables compact
+  MD060:
+    style: compact

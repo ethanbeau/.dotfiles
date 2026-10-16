@@ -1,0 +1,23 @@
+#!/bin/sh
+
+appearance=Dark
+case "$(uname -s)" in
+  Darwin) appearance=$(defaults read -g AppleInterfaceStyle 2>/dev/null || true) ;;
+  Linux)
+    if command -v gsettings >/dev/null 2>&1; then
+      case "$(gsettings get org.gnome.desktop.interface color-scheme 2>/dev/null)" in
+        *prefer-light*) appearance=Light ;;
+      esac
+    fi
+    ;;
+esac
+
+if [ "$appearance" = "Dark" ]; then
+	exec delta "$@" --dark \
+		--minus-style="syntax #6d2525" \
+		--minus-emph-style="syntax #922f2f"
+fi
+
+exec delta "$@" --light \
+	--minus-style="syntax #ffebe9" \
+	--minus-emph-style="syntax #ffd8d8"

@@ -1,0 +1,6 @@
+brew "ffmpeg"
+cask "grandperspective"
+brew "mactop"
+brew "wget"
+cask "font-fira-code"
+cask "helium-browser"

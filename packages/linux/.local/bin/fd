@@ -1,0 +1,7 @@
+#!/bin/sh
+# Native package names differ on Debian/Ubuntu.
+for binary in /usr/bin/fd /usr/local/bin/fd /usr/bin/fdfind; do
+  if [ -x "$binary" ]; then exec "$binary" "$@"; fi
+done
+printf '%s\n' 'fd: native package is not installed' >&2
+exit 127

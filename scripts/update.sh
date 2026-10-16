@@ -1,17 +1,5 @@
 #!/usr/bin/env bash
-echo "🔄 Updating System..."
+set -eo pipefail
 
-# Update Homebrew and Upgrade all packages/casks
-echo "🍺 Updating Homebrew..."
-brew update
-brew upgrade
-
-# Cleanup outdated Homebrew downloads
-echo "🧹 Cleaning up Homebrew..."
-brew cleanup
-
-# Update macOS software (optional)
-# echo "🍎 Checking for macOS updates..."
-# softwareupdate -i -a
-
-echo "✅ System Updated!"
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/lib/common.sh"
+main update "$@"

@@ -1,0 +1,31 @@
+# macOS Ghostty settings.
+# The shared config is linked beside this file and its source.
+config-file = common.ghostty
+
+window-colorspace = display-p3
+macos-icon = custom
+macos-option-as-alt = true
+macos-non-native-fullscreen = padded-notch
+window-vsync = true
+window-save-state = always
+font-thicken=true
+font-thicken-strength=1
+quick-terminal-animation-duration = 0
+quick-terminal-space-behavior = move
+keybind = global:alt+grave_accent=toggle_quick_terminal
+keybind = cmd+alt+backspace=clear_screen
+keybind = cmd+alt+u=copy_url_to_clipboard
+keybind = cmd+alt+s=write_scrollback_file:open
+keybind = cmd+alt+t=toggle_window_float_on_top
+keybind = shift+enter=text:\x1b\r
+keybind = cmd+alt+shift+s=toggle_secure_input
+keybind = cmd+alt+shift+r=reset
+keybind = opt+h=goto_split:left
+keybind = opt+j=goto_split:bottom
+keybind = opt+k=goto_split:top
+keybind = opt+l=goto_split:right
+keybind = opt+shift+h=new_split:left
+keybind = opt+shift+j=new_split:down
+keybind = opt+shift+k=new_split:up
+keybind = opt+shift+l=new_split:right
+keybind = opt+shift+f=toggle_split_zoom

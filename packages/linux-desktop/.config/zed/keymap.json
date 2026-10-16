@@ -1,0 +1,43 @@
+[
+  {
+    "context": "ProjectPanel && !GitPanel",
+    "bindings": {
+      "ctrl-b": "workspace::ToggleRightDock"
+    }
+  },
+  {
+    "context": "!ProjectPanel",
+    "bindings": {
+      "ctrl-b": "project_panel::ToggleFocus"
+    }
+  },
+  {
+    "context": "GitPanel && !ProjectPanel",
+    "bindings": {
+      "ctrl-g": "workspace::ToggleRightDock"
+    }
+  },
+  {
+    "context": "!GitPanel",
+    "bindings": {
+      "ctrl-g": "git_panel::ToggleFocus"
+    }
+  },
+  {
+    "context": "Workspace",
+    "bindings": {
+      "ctrl-/": "terminal_panel::ToggleFocus",
+      "ctrl-alt-b": "workspace::ToggleLeftDock",
+      "alt-shift-h": "workspace::ActivatePaneLeft",
+      "alt-shift-j": "workspace::ActivatePaneDown",
+      "alt-shift-k": "workspace::ActivatePaneUp",
+      "alt-shift-l": "workspace::ActivatePaneRight"
+    }
+  },
+  {
+    "context": "Editor && vim_mode == insert && !menu",
+    "bindings": {
+      "j k": "vim::NormalBefore"
+    }
+  }
+]

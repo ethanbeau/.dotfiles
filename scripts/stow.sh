@@ -1,10 +1,5 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -eo pipefail
 
-DOTFILES_DIR="$HOME/.dotfiles"
-
-echo "🔗 Symlinking dotfiles with Stow..."
-cd "$DOTFILES_DIR" || exit
-stow -v --adopt --restow --target="$HOME" .
-
-echo "✅ Stow complete."
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/lib/common.sh"
+main stow "$@"
