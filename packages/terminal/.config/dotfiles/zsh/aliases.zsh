@@ -21,6 +21,21 @@ alias prs="gh pr list"
 alias prc="gh pr checkout"
 alias lgtm="gh pr review --approve"
 
+alias dk="docker"
+alias dkprune="docker image prune -a"
+alias dkc="docker compose"
+alias dkcl="docker compose logs"
+alias dkcb="docker compose build"
+alias dkcB="docker compose build --no-cache"
+if [[ "$OSTYPE" == darwin* ]]; then
+  alias dkstart="orb start"
+  alias dkstop="orb stop"
+elif [[ "$OSTYPE" == linux* ]]; then
+  alias dkstart="sudo systemctl start docker"
+  alias dkstop="sudo systemctl stop docker"
+fi
+
+
 if (( $+commands[nvim] )); then
   alias v="nvim"
   alias vim="nvim"
