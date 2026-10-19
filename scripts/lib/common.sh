@@ -10,6 +10,7 @@ PREVIOUS_PROFILE=""
 EXTRAS=""
 CONFIG_ONLY=0
 DRY_RUN=0
+ADOPT=0
 REPORT=()
 PACKAGES=()
 
@@ -34,6 +35,7 @@ Usage: bash scripts/{setup,stow,update}.sh [options]
   --extras development,containers,utilities   Replace saved extras; use none to clear
   --config-only                             Do not install or update packages
   --dry-run                                 Show actions without changing files
+  --adopt                                   Adopt conflicting files with backups
   --help
 
 Profile and extras are saved per user after a successful run.
@@ -65,6 +67,7 @@ parse_args() {
         shift 2 ;;
       --config-only) CONFIG_ONLY=1; shift ;;
       --dry-run) DRY_RUN=1; shift ;;
+      --adopt) ADOPT=1; shift ;;
       --help|-h) usage; exit 0 ;;
       *) die "Unknown option: $1" ;;
     esac
@@ -86,6 +89,7 @@ detect_platform() {
     Darwin) PLATFORM=macos; BACKEND=brew ;;
     Linux)
       [[ -r /etc/os-release ]] || die 'Cannot read /etc/os-release'
+      # shellcheck source=/dev/null
       source /etc/os-release
       PLATFORM=linux
       case "$ID" in
@@ -162,45 +166,26 @@ validate_config_home() {
   [[ "$CONFIG_HOME" == /* && "$CONFIG_HOME" != *$'\n'* ]] || die 'XDG_CONFIG_HOME must be an absolute path without newlines'
 }
 
-validate_config_targets() {
-  local config_home="$1" package source_dir target relative
-  shift
-  for package in "$@"; do
-    source_dir="$DOTFILES_DIR/packages/$package/.config"
-    [[ -d "$source_dir" ]] || continue
-    while IFS= read -r -d '' source_dir; do
-      relative="${source_dir#"$DOTFILES_DIR/packages/$package/.config/"}"
-      target="$config_home/$relative"
-      if [[ -L "$target" ]]; then
-        die "Config target is a symlink: $target -> $(readlink "$target"). Move or remove it before Stow; this package manages files inside a real directory."
-      fi
-    done < <(find "$DOTFILES_DIR/packages/$package/.config" -mindepth 1 -type d -print0)
-  done
-}
-
 stow_packages() {
   local operation="$1" config_home="$2" package
   shift 2
   local -a options=(--no-folding --verbose --ignore='(^|/)\.DS_Store$' --ignore='.*\.bak$' --ignore='.*\.lock$')
   if [[ "$operation" == install ]]; then
-    options+=(--adopt --restow)
+    options+=(--restow)
+    if (( ADOPT )); then options+=(--adopt); fi
   else
     options+=(--delete)
-  fi
-
-  if [[ "$operation" == install ]]; then
-    validate_config_targets "$config_home" "$@"
   fi
 
   for package in "$@"; do
     prune_stale_package_links "$HOME" "$package" ''
   done
   stow --dir="$DOTFILES_DIR/packages" --target="$HOME" \
-    --ignore='^\.config$' "${options[@]}" "$@"
+    --ignore='^\.config$' "${options[@]}" "$@" || return
 
   for package in "$@"; do
     [[ -d "$DOTFILES_DIR/packages/$package/.config" ]] || continue
-    stow_config_package "$operation" "$config_home" "$package" "${options[@]}"
+    stow_config_package "$operation" "$config_home" "$package" "${options[@]}" || return
   done
 }
 
@@ -222,11 +207,10 @@ link_points_to() {
   return 1
 }
 
-stale_package_link() {
+is_stale_package_link() {
   local target="$1" package="$2" relative="$3" root
   [[ -L "$target" && ! -e "$target" ]] || return 1
   if link_points_to "$target" "$DOTFILES_DIR/packages/$package/$relative"; then
-    unlink "$target"
     return 0
   fi
   for root in "$DOTFILES_DIR" "$HOME/.dotfiles"; do
@@ -235,7 +219,6 @@ stale_package_link() {
       continue
     fi
     if link_points_to "$target" "$root/$relative"; then
-      unlink "$target"
       return 0
     fi
   done
@@ -248,7 +231,9 @@ prune_stale_package_links() {
   [[ -d "$source_root" ]] || return 0
   while IFS= read -r -d '' file; do
     relative="${file#"$source_root"/}"
-    stale_package_link "$target_root/$relative" "$package" "${source_subdir:+$source_subdir/}$relative" || true
+    if is_stale_package_link "$target_root/$relative" "$package" "${source_subdir:+$source_subdir/}$relative"; then
+      unlink "$target_root/$relative" || return
+    fi
   done < <(find "$source_root" -mindepth 1 \( -type d -o -type f \) ! -name '.DS_Store' ! -name '*.bak' ! -name '*.lock' -print0)
 }
 
@@ -266,27 +251,7 @@ stow_config_package() {
   fi
 }
 
-link_configs() {
-  validate_config_home
-  if (( DRY_RUN )); then
-    if [[ -n "$PREVIOUS_PROFILE" && ( "$PREVIOUS_PROFILE" != "$PROFILE" || "$PREVIOUS_CONFIG_HOME" != "$CONFIG_HOME" ) ]]; then
-      note "Would unstow profile: $PREVIOUS_PROFILE"
-    fi
-    note "Would adopt existing files and link Stow packages: ${PACKAGES[*]}"
-    note "Config directory: $CONFIG_HOME"
-    return 0
-  fi
-  if ! command -v stow >/dev/null; then
-    die 'GNU Stow is required to link configs. Install it, then rerun setup.'
-  fi
-  if [[ -n "$PREVIOUS_PROFILE" && ( "$PREVIOUS_PROFILE" != "$PROFILE" || "$PREVIOUS_CONFIG_HOME" != "$CONFIG_HOME" ) ]]; then
-    local -a previous_packages
-    read -r -a previous_packages <<< "$(profile_packages "$PREVIOUS_PROFILE")"
-    stow_packages delete "$PREVIOUS_CONFIG_HOME" "${previous_packages[@]}"
-  fi
-  mkdir -p "$CONFIG_HOME"
-  stow_packages install "$CONFIG_HOME" "${PACKAGES[@]}"
-}
+source "$DOTFILES_DIR/scripts/lib/links.sh"
 
 import_mac_settings() {
   local settings="$DOTFILES_DIR/settings/vorssaint-settings.plist"

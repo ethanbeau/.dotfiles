@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 # Shared by Bash setup and Zsh startup.
 dotfiles_homebrew_init() {
   local brew_bin

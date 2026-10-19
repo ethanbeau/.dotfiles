@@ -129,12 +129,100 @@ class ProfilesTest(unittest.TestCase):
         local = self.home / ".config/nvim/init.lua"
         local.parent.mkdir(parents=True)
         local.write_text("-- existing local config\n")
-        self.cli()
+        self.cli(flags="--adopt")
         self.assertTrue(local.is_symlink())
         self.assertEqual(
             (self.checkout / "packages/terminal/.config/nvim/init.lua").read_text(),
             "-- existing local config\n",
         )
+        backups = list((self.home / ".local/state/dotfiles/backups").glob("stow.*"))
+        self.assertEqual(len(backups), 1)
+        self.assertIn(str(local), (backups[0] / "paths.tsv").read_text())
+        originals = [p.read_text() for p in (backups[0] / "sources").iterdir()]
+        self.assertIn(
+            (REPO / "packages/terminal/.config/nvim/init.lua").read_text(), originals
+        )
+        locals_saved = [
+            p.read_text()
+            for p in (backups[0] / "targets").iterdir()
+            if not p.is_symlink()
+        ]
+        self.assertIn("-- existing local config\n", locals_saved)
+
+    def test_conflicts_require_explicit_adoption(self):
+        local = self.home / ".zshrc"
+        local.write_text("# existing shell config\n")
+        source = self.checkout / "packages/terminal/.zshrc"
+        original = source.read_text()
+        for flags in ["", "--dry-run"]:
+            result = self.bash(
+                "source scripts/lib/common.sh; "
+                "detect_platform() { PLATFORM=linux; BACKEND=apt; }; "
+                f"main stow --profile linux-server {flags}",
+                check=False,
+            )
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("Conflict:", result.stderr)
+            self.assertEqual(local.read_text(), "# existing shell config\n")
+            self.assertEqual(source.read_text(), original)
+            self.assertFalse((self.home / ".local/state").exists())
+
+    def test_switch_conflict_preserves_previous_profile(self):
+        self.cli()
+        local = self.home / ".config/zed/settings.json"
+        local.parent.mkdir(parents=True)
+        local.write_text("{}\n")
+        state = self.home / ".local/state/dotfiles/machine"
+        original = state.read_bytes()
+        result = self.bash(
+            "source scripts/lib/common.sh; "
+            "detect_platform() { PLATFORM=linux; BACKEND=apt; }; "
+            "main stow --profile linux-desktop",
+            check=False,
+        )
+        self.assertNotEqual(result.returncode, 0)
+        self.assertTrue((self.home / ".zshrc").is_symlink())
+        self.assertTrue((self.home / ".local/bin/bat").is_symlink())
+        self.assertEqual(state.read_bytes(), original)
+        self.assertFalse((self.home / ".config/ghostty/config.ghostty").exists())
+
+    def test_failed_switch_restores_links_and_adopted_sources(self):
+        self.cli()
+        local = self.home / ".config/zed/settings.json"
+        local.parent.mkdir(parents=True)
+        local.write_text("{}\n")
+        source = self.checkout / "packages/desktop/.config/zed/settings.json"
+        original_source = source.read_bytes()
+        state = self.home / ".local/state/dotfiles/machine"
+        original_state = state.read_bytes()
+        # Fail after Stow has adopted files and installed the new config links.
+        result = self.bash(
+            "source scripts/lib/common.sh; "
+            "detect_platform() { PLATFORM=linux; BACKEND=apt; }; "
+            'stow() { command stow "$@" || return; '
+            "case $* in *packages/linux-desktop*) return 1;; esac; }; "
+            "main stow --profile linux-desktop --adopt",
+            check=False,
+        )
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("restoring previous", result.stderr)
+        self.assertEqual(source.read_bytes(), original_source)
+        self.assertEqual(local.read_text(), "{}\n")
+        self.assertFalse(local.is_symlink())
+        self.assertEqual(state.read_bytes(), original_state)
+        self.assertTrue((self.home / ".zshrc").is_symlink())
+        self.assertTrue((self.home / ".local/bin/bat").is_symlink())
+        self.assertFalse((self.home / ".config/ghostty/config.ghostty").exists())
+
+    def test_migration_dry_run_does_not_remove_legacy_links(self):
+        (self.home / ".dotfiles").symlink_to(self.checkout, target_is_directory=True)
+        config = self.home / ".config"
+        config.mkdir()
+        legacy = config / "nvim"
+        legacy.symlink_to("../.dotfiles/.config/nvim")
+        self.cli(flags="--dry-run")
+        self.assertEqual(legacy.readlink(), Path("../.dotfiles/.config/nvim"))
+        self.assertFalse((self.home / ".local/state").exists())
 
     def test_entrypoints_from_another_directory_with_spaces_in_checkout_path(self):
         checkout = self.root / "source trees" / "my shell config"

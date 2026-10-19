@@ -36,7 +36,8 @@ bash scripts/setup.sh --profile linux-desktop --extras development,utilities
 bash scripts/setup.sh --profile macos --extras development
 ```
 
-Use `--dry-run` to show selections and actions without changing files:
+Use `--dry-run` to show selections, actions, and link conflicts without changing files.
+Link conflicts cause a nonzero exit status:
 
 ```bash
 bash scripts/setup.sh --profile macos --dry-run
@@ -119,8 +120,10 @@ Native Neovim packages older than 0.11.2 use basic editor settings instead of
 loading incompatible LazyVim plugins. See [LazyVim requirements](https://www.lazyvim.org/).
 
 Stow links individual files from `packages/` and keeps real config directories.
-Profile changes unstow the saved profile and install the selected profile's links.
-They do not uninstall apps or remove ordinary user files.
+Profile changes check the new targets before they unstow the saved profile and
+install the selected profile's links. If linking fails, the command restores the
+previous files, links, and adopted checkout contents. The saved profile stays
+unchanged. Package installations are not rolled back.
 
 App configs are installed in `${XDG_CONFIG_HOME:-~/.config}`. `XDG_CONFIG_HOME`
 must be an absolute path. Shell entry points and executables stay in your home
@@ -128,10 +131,22 @@ directory. The config directory is saved with the profile; changing it on a late
 run removes the managed links from the saved directory and installs them in the
 selected directory. Local files and application data are not moved.
 
-Existing conflicting files are adopted into the selected Stow package with
-`--adopt`. Adoption changes the checkout and preserves the local file's contents.
+Existing conflicting files stop setup by default. Use `--adopt` to move their
+contents into the selected Stow package:
+
+```bash
+bash scripts/stow.sh --adopt
+```
+
+Adoption changes the checkout and preserves the local file's contents. Before
+linking, the command saves both the local files and the checkout originals in
+`${XDG_STATE_HOME:-~/.local/state}/dotfiles/backups/stow.*`. The command prints the
+backup directory. Its `paths.tsv` maps each numbered backup to the target and
+source paths. `targets/` holds the original local files and links; `sources/`
+holds the checkout files replaced by adoption. Backups remain after completion.
 Inspect `git diff` before you commit adopted files, especially shell files shared
-between platforms. Use `scripts/stow.sh` to apply the selected packages.
+between platforms. Foreign symlinks require manual resolution. Recognized broken
+links from the old dotfiles layout are migrated automatically.
 
 ## Shell behavior
 
@@ -145,6 +160,8 @@ between platforms. Use `scripts/stow.sh` to apply the selected packages.
   `p` over SSH tells you to paste from your local terminal.
 - Linux Ghostty and Zed configs use Linux keys. The Mac cmux config is not linked
   to the different Linux GUI app; Linux cmux uses its own defaults.
+- `killport 3000` sends SIGTERM to listeners on port 3000. Use
+  `killport --force 3000` to send SIGKILL. Ports must be between 1 and 65535.
 
 Keep secrets in `~/.secrets`. Put local overrides in
 `${XDG_CONFIG_HOME:-~/.config}/dotfiles/local.zsh`. These files and saved machine
@@ -188,3 +205,14 @@ The checks use a temporary checkout and home directory. They cover profile
 linking, profile switching, adoption, missing tools, package failure handling, clipboard
 output, and native package selection. Package-manager calls are mocked; these
 checks do not install system packages or prove distro-specific availability.
+
+For all checks, install ShellCheck, Ruff, and ty in addition to the tools above:
+
+```bash
+bash scripts/check.sh
+```
+
+This command checks Bash, POSIX shell, and Zsh syntax; runs ShellCheck, Ruff,
+format checks, and ty; and runs the offline tests. GitHub Actions runs it on
+macOS and Linux for pushes and pull requests. The tests also cover adoption
+backups, link rollback, conflict reporting during dry runs, and process signals.

@@ -1,0 +1,33 @@
+name: Checks
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install Linux check dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y stow zsh shellcheck neovim
+      - name: Install macOS check dependencies
+        if: runner.os == 'macOS'
+        run: brew install stow zsh shellcheck neovim
+      - name: Install Python check dependencies
+        run: python3 -m pip install ruff ty
+      - name: Check shell scripts, Python, and profile behavior
+        run: bash scripts/check.sh
