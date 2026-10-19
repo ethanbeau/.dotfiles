@@ -171,8 +171,9 @@ stow_packages() {
   shift 2
   local -a options=(--no-folding --verbose --ignore='(^|/)\.DS_Store$' --ignore='.*\.bak$' --ignore='.*\.lock$')
   if [[ "$operation" == install ]]; then
-    options+=(--restow)
-    if (( ADOPT )); then options+=(--adopt); fi
+    # Older Stow versions reject regular files during restow's unstow phase,
+    # before adoption can run. Existing correct links are safe to stow again.
+    if (( ADOPT )); then options+=(--adopt --stow); else options+=(--restow); fi
   else
     options+=(--delete)
   fi

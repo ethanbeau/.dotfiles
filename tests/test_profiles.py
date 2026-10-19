@@ -148,6 +148,9 @@ class ProfilesTest(unittest.TestCase):
             if not p.is_symlink()
         ]
         self.assertIn("-- existing local config\n", locals_saved)
+        self.cli(flags="--adopt")
+        self.assertTrue(local.is_symlink())
+        self.assertEqual(local.read_text(), "-- existing local config\n")
 
     def test_conflicts_require_explicit_adoption(self):
         local = self.home / ".zshrc"
