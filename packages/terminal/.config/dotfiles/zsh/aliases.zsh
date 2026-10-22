@@ -47,9 +47,40 @@ alias mkdir="mkdir -p"
 alias uuidgen="uuidgen | tr '[:upper:]' '[:lower:]'"
 alias lg="lazygit"
 alias ld="lazydocker"
-if [[ "$OSTYPE" == darwin* ]] && (( $+commands[brew] )); then
-  alias brewup="brew update && brew upgrade"
-fi
+sysup() {
+  case "$(uname -s)" in
+    Darwin)
+      command -v brew >/dev/null || { print -u2 'sysup: Homebrew is not installed'; return 127; }
+      brew update && brew upgrade
+      ;;
+    Linux)
+      [[ -r /etc/os-release ]] || { print -u2 'sysup: cannot read /etc/os-release'; return 1; }
+      source /etc/os-release
+      local manager
+      case "${ID:-} ${ID_LIKE:-}" in
+        *debian*|*ubuntu*) manager=apt ;;
+        *fedora*|*rhel*|*centos*) manager=dnf ;;
+        *arch*) manager=pacman ;;
+        *) print -u2 "sysup: unsupported Linux distribution: ${PRETTY_NAME:-${ID:-unknown}}"; return 1 ;;
+      esac
+      local -a sudo_cmd=()
+      if (( EUID != 0 )); then
+        command -v sudo >/dev/null || { print -u2 'sysup: sudo is required'; return 127; }
+        sudo_cmd=(sudo)
+      fi
+      case "$manager" in
+        apt) "${sudo_cmd[@]}" apt update && "${sudo_cmd[@]}" apt upgrade ;;
+        dnf) "${sudo_cmd[@]}" dnf upgrade --refresh ;;
+        pacman) "${sudo_cmd[@]}" pacman -Syu ;;
+      esac
+      ;;
+    *)
+      print -u2 "sysup: unsupported operating system: $(uname -s)"
+      return 1
+      ;;
+  esac
+}
+
 alias secret="openssl rand -hex 32"
 
 alias reload="source ~/.zshrc && echo 'Reloaded .zshrc'"

@@ -176,7 +176,14 @@ by the setup scripts and Zsh, with support for both Mac architectures.
 
 ## Updates
 
+Run `sysup` in an interactive Zsh session to update the whole system. It detects
+macOS and Homebrew, or Debian/Ubuntu-family, Fedora/RHEL-family, and Arch-family
+Linux distributions and runs the matching package manager. Linux updates use
+`sudo` when needed. The Linux package managers supported by this dotfiles repo
+are apt, dnf, and pacman.
+
 ```bash
+sysup
 bash scripts/update.sh
 bash scripts/update.sh --config-only
 ```
