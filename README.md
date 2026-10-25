@@ -11,8 +11,11 @@ and GNU Stow.
 | `linux-server` | Zsh, completion plugins, Starship, Atuin, fzf, zoxide, eza, bat, dust, fd, ripgrep/rga, Git/delta, lazygit, lazydocker, Neovim, Yazi, and supporting terminal tools |
 | `linux-desktop` | Server tools plus Ghostty, Zed, cmux GUI, Bruno, Helium, Fira Code fonts, and clipboard tools |
 
-Linux supports standard Debian, Ubuntu, Fedora, and Arch installations. Immutable
-Fedora and distribution derivatives are not supported. Desktop setup requires an
+Linux supports standard Debian, Ubuntu, Fedora, and Arch-based installations,
+including CachyOS and other derivatives that list `arch` in `/etc/os-release`'s
+`ID_LIKE` field. Arch derivatives use the same pacman packages, full system
+upgrades, and permitted AUR fallbacks as Arch. Immutable Fedora and other
+Debian/Ubuntu/Fedora derivatives are not supported. Desktop setup requires an
 existing GUI. It does not install a desktop environment or change system shortcuts.
 
 Mac packages are defined in `manifests/macos/base.Brewfile`. Zed config is linked on Mac; install the
@@ -89,9 +92,12 @@ explicit fallback sources are permitted:
   Other platforms are reported as unavailable. The TUI is not substituted.
 - Docker Desktop: official native packages and dependency repositories from
   [Docker](https://docs.docker.com/desktop/setup/install/linux/), or its AUR recipe.
-- Arch: only the AUR recipes explicitly listed in the manifest. They are built
-  with `makepkg` as the current regular user. Setup installs `base-devel` when
-  an AUR build is needed. Root runs skip and report AUR packages.
+- Arch and derivatives: packages missing from configured repositories are
+  installed through [paru](https://github.com/Morganamilo/paru) as the current
+  regular user. The manifest's AUR name takes precedence; otherwise setup tries
+  the pacman package name. If paru is missing, setup installs it from configured
+  repositories or builds it from AUR with `makepkg` after installing `base-devel`
+  and Git. Root runs skip and report AUR packages.
 
 Setup does not install Linux Homebrew, Flatpak, AppImage, Snap, generic binary
 installers, or packages through npm/pip/cargo. Existing Neovim plugin and Zed
@@ -191,7 +197,7 @@ bash scripts/update.sh --config-only
 Debian/Ubuntu and Fedora refresh metadata and install/upgrade the selected
 packages and dependencies. Native packages installed from release downloads are
 resolved again so they can update too. Arch runs a **full system upgrade** before
-selected package installation and rebuilds selected AUR packages. Arch does not
+selected package installation and updates selected AUR packages through paru. Arch does not
 support partial upgrades. Mac retains `brew update`, `brew upgrade`, and
 `brew cleanup`. Config links are refreshed after package operations.
 

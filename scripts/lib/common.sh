@@ -98,10 +98,15 @@ detect_platform() {
           [[ ! -e /run/ostree-booted ]] || die 'Immutable Fedora is not supported'
           BACKEND=dnf ;;
         arch) BACKEND=pacman ;;
-        *) die "Unsupported distribution: $ID" ;;
+        *)
+          case " ${ID_LIKE:-} " in
+            *' arch '*) BACKEND=pacman ;;
+            *) die "Unsupported distribution: $ID" ;;
+          esac
+          ;;
       esac
       ;;
-    *) die 'Only macOS, Debian, Ubuntu, Fedora, and Arch are supported' ;;
+    *) die 'Only macOS, Debian, Ubuntu, Fedora, and Arch-based distributions are supported' ;;
   esac
 }
 

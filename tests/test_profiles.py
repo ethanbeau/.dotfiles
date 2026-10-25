@@ -2,6 +2,7 @@
 
 import os
 import pty
+import shlex
 import shutil
 import subprocess
 import sys
@@ -392,6 +393,64 @@ class ProfilesTest(unittest.TestCase):
                 )
                 self.assertFalse(list(self.home.iterdir()))
 
+    def distro_cli(self, metadata, *, action="setup", profile="linux-server"):
+        release = self.root / "os-release"
+        release.write_text(metadata)
+        common = self.checkout / "scripts/lib/common.sh"
+        common.write_text(common.read_text().replace("/etc/os-release", str(release)))
+        return self.bash(
+            "uname() { printf 'Linux\\n'; }; export -f uname; "
+            f"bash scripts/{action}.sh --profile {shlex.quote(profile)} --dry-run",
+            check=False,
+        )
+
+    def test_arch_derivatives_use_pacman(self):
+        for metadata in [
+            "ID=arch\n",
+            "ID=cachyos\nID_LIKE=arch\n",
+            "ID=manjaro\nID_LIKE=arch\n",
+            "ID=endeavouros\nID_LIKE=arch\n",
+            "ID=garuda\nID_LIKE=arch\n",
+            'ID=custom\nID_LIKE="custom-base arch other"\n',
+        ]:
+            for action in ["setup", "update", "stow"]:
+                for profile in ["linux-server", "linux-desktop"]:
+                    with self.subTest(
+                        metadata=metadata, action=action, profile=profile
+                    ):
+                        result = self.distro_cli(
+                            metadata, action=action, profile=profile
+                        )
+                        self.assertEqual(
+                            result.returncode, 0, result.stdout + result.stderr
+                        )
+                        self.assertIn("packages: pacman", result.stdout)
+                        if action != "stow":
+                            self.assertIn(
+                                "Arch also performs a full system upgrade",
+                                result.stdout,
+                            )
+                            self.assertIn("Would select fd: fd;", result.stdout)
+                            self.assertEqual(
+                                "Would select ghostty:" in result.stdout,
+                                profile == "linux-desktop",
+                            )
+                        self.assertFalse(list(self.home.iterdir()))
+
+    def test_unsupported_distributions_remain_rejected(self):
+        for metadata in [
+            "ID=unknown\n",
+            "ID=archlike\n",
+            "ID=unknown\nID_LIKE=archlike\n",
+            "ID=unknown\nID_LIKE=notarch\n",
+            "ID=linuxmint\nID_LIKE=ubuntu\n",
+        ]:
+            with self.subTest(metadata=metadata):
+                result = self.distro_cli(metadata)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn("Unsupported distribution:", result.stderr)
+                self.assertFalse(list(self.home.iterdir()))
+
     def test_saved_selection_and_invalid_options(self):
         self.cli(flags="--extras development")
         result = self.bash(
@@ -412,14 +471,89 @@ class ProfilesTest(unittest.TestCase):
                 "package_available() { [[ $1 != missing ]]; }; "
                 "package_installed() { return 1; }; "
                 "native_install() { note INSTALL:$1; [[ $1 != bad ]]; }; "
+                "install_aur() { note AUR:$1; return 1; }; "
                 "apt-get() { note APT:$*; }; dnf() { note DNF:$*; }; pacman() { note PACMAN:$*; }; "
                 "manage_packages update"
             )
             self.assertIn("INSTALL:git", result.stdout)
             self.assertIn("native package install/upgrade failed", result.stderr)
-            self.assertIn("unavailable in configured repositories", result.stderr)
             if backend == "pacman":
                 self.assertIn("PACMAN:-Syu --noconfirm", result.stdout)
+                self.assertIn("AUR:missing", result.stdout)
+                self.assertIn("AUR install/upgrade failed", result.stderr)
+            else:
+                self.assertIn("unavailable in configured repositories", result.stderr)
+
+    def test_arch_uses_repositories_before_paru_and_honors_aur_names(self):
+        (self.checkout / "manifests/linux.psv").write_text(
+            "terminal|git|git|git|git|-|-|-\n"
+            "terminal|same|same|same|same|-|-|-\n"
+            "terminal|renamed|renamed|renamed|renamed|-|-|renamed-bin\n"
+        )
+        for action in ["setup", "update"]:
+            with self.subTest(action=action):
+                result = self.bash(
+                    "source scripts/lib/common.sh; "
+                    "PROFILE=linux-server; BACKEND=pacman; SUDO=(); "
+                    "source scripts/lib/linux.sh; "
+                    "package_available() { [[ $1 == git ]]; }; "
+                    "package_installed() { return 1; }; "
+                    "pacman() { note PACMAN:$*; }; "
+                    "native_install() { note NATIVE:$*; }; "
+                    "install_aur() { note AUR:$*; }; "
+                    f"manage_packages {action}"
+                )
+                self.assertEqual(
+                    result.stdout.splitlines(),
+                    [
+                        "PACMAN:-Syu --noconfirm",
+                        "NATIVE:git",
+                        "AUR:same",
+                        "AUR:renamed-bin",
+                    ],
+                )
+
+    @unittest.skipIf(os.geteuid() == 0, "AUR builds require a regular user")
+    def test_paru_existing_repository_and_aur_bootstrap(self):
+        for mode in ["existing", "repository", "aur", "build-failure", "paru-failure"]:
+            with self.subTest(mode=mode):
+                marker = self.home / "paru-ready"
+                marker.unlink(missing_ok=True)
+                if mode in ["existing", "paru-failure"]:
+                    marker.touch()
+                result = self.bash(
+                    "source scripts/lib/common.sh; BACKEND=pacman; "
+                    "source scripts/lib/linux.sh; "
+                    "command() { "
+                    'if [[ $1 == -v && $2 == paru ]]; then [[ -f "$HOME/paru-ready" ]]; '
+                    'else builtin command "$@"; fi; }; '
+                    f"mode={shlex.quote(mode)}; "
+                    "package_available() { [[ $1 == paru && $mode == repository ]]; }; "
+                    "native_install() { note NATIVE:$*; "
+                    'if [[ $1 == paru ]]; then touch "$HOME/paru-ready"; fi; }; '
+                    'git() { note GIT:$*; mkdir -p "${@: -1}"; }; '
+                    "makepkg() { note MAKEPKG:$*; [[ $mode != build-failure ]] || return 1; "
+                    'touch "$HOME/paru-ready"; }; '
+                    "paru() { note PARU:$*; [[ $mode != paru-failure ]]; }; "
+                    "install_aur renamed-bin",
+                    check=False,
+                )
+                self.assertEqual(
+                    result.returncode == 0,
+                    mode not in ["build-failure", "paru-failure"],
+                    result.stdout + result.stderr,
+                )
+                self.assertEqual(
+                    "MAKEPKG:" in result.stdout, mode in ["aur", "build-failure"]
+                )
+                self.assertEqual("NATIVE:paru" in result.stdout, mode == "repository")
+                self.assertEqual(
+                    "PARU:-S --needed --noconfirm -- renamed-bin" in result.stdout,
+                    mode != "build-failure",
+                )
+                if mode in ["aur", "build-failure"]:
+                    self.assertIn("NATIVE:base-devel git", result.stdout)
+                    self.assertIn("https://aur.archlinux.org/paru.git", result.stdout)
 
     @unittest.skipIf(os.geteuid() == 0, "Root already has package installation access")
     def test_no_sudo_falls_back_to_config_only(self):

@@ -16,7 +16,10 @@ selected_rows() {
     case "$BACKEND" in
       apt) package="$apt"; fallback="$apt_source" ;;
       dnf) package="$dnf"; fallback="$dnf_source" ;;
-      pacman) package="$pacman"; fallback="$aur" ;;
+      pacman)
+        package="$pacman"; fallback="$aur"
+        [[ "$fallback" != - ]] || fallback="$package"
+        ;;
     esac
     printf '%s|%s|%s\n' "$tool" "$package" "$fallback"
   done < "$DOTFILES_DIR/manifests/linux.psv"
@@ -86,10 +89,11 @@ manage_packages() {
   done
   for tool in "${missing[@]}"; do
     IFS='|' read -r tool package fallback <<< "$tool"
-    if [[ "$fallback" == - ]]; then
-      report "$tool: $package is unavailable in configured repositories"
-    elif [[ "$BACKEND" == pacman ]]; then
+    if [[ "$BACKEND" == pacman ]]; then
+      [[ "$fallback" != - ]] || fallback="$package"
       if ! install_aur "$fallback"; then report "$tool: AUR install/upgrade failed ($fallback)"; fi
+    elif [[ "$fallback" == - ]]; then
+      report "$tool: $package is unavailable in configured repositories"
     elif ! install_fallback "$fallback" "$package"; then
       report "$tool: source $fallback is unavailable or installation failed"
     fi
@@ -101,18 +105,30 @@ manage_packages() {
 }
 
 install_aur() {
-  local package="$1" checkout
+  local package="$1"
   (( EUID != 0 )) || { note "AUR $package must be built as a regular user" >&2; return 1; }
+  ensure_paru || return 1
+  paru -S --needed --noconfirm -- "$package"
+}
+
+ensure_paru() {
+  command -v paru >/dev/null && return 0
+  if package_available paru; then
+    native_install paru || return 1
+    command -v paru >/dev/null
+    return
+  fi
+  local checkout
   command -v git >/dev/null || return 1
-  # Only recipes named in the manifest can reach this handler.
   native_install base-devel git || return 1
   checkout="$(mktemp -d)" || return 1
   (
     trap 'rm -rf "$checkout"' EXIT
-    git clone --depth=1 "https://aur.archlinux.org/$package.git" "$checkout/source" || exit 1
+    git clone --depth=1 https://aur.archlinux.org/paru.git "$checkout/source" || exit 1
     cd "$checkout/source" || exit 1
     makepkg --syncdeps --install --needed --noconfirm
-  )
+  ) || return 1
+  command -v paru >/dev/null
 }
 
 install_copr() {
