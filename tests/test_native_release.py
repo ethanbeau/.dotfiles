@@ -22,20 +22,6 @@ class NativeResponse(io.BytesIO):
 
 
 class NativeReleaseTest(unittest.TestCase):
-    def test_cmux_does_not_select_wrong_architecture_or_format(self):
-        with patch.object(RELEASE.platform, "machine", return_value="x86_64"):
-            self.assertEqual(
-                RELEASE.release_url("cmux-deb", "deb")[0],
-                "https://cmux.com/api/download/browser-nightly/linux-x64/deb",
-            )
-            with self.assertRaises(ValueError):
-                RELEASE.release_url("cmux-deb", "rpm")
-        with (
-            patch.object(RELEASE.platform, "machine", return_value="aarch64"),
-            self.assertRaises(ValueError),
-        ):
-            RELEASE.release_url("cmux-deb", "deb")
-
     def test_native_release_requires_exact_asset_match(self):
         data = {
             "assets": [
@@ -58,7 +44,7 @@ class NativeReleaseTest(unittest.TestCase):
                 patch.object(
                     RELEASE.sys,
                     "argv",
-                    ["native-release.py", "cmux-deb", "deb", str(target)],
+                    ["native-release.py", "bruno-release", "deb", str(target)],
                 ),
                 patch.object(
                     RELEASE, "release_url", return_value=(response.url, "sha256:wrong")

@@ -261,16 +261,25 @@ source "$DOTFILES_DIR/scripts/lib/links.sh"
 
 import_mac_settings() {
   local settings="$DOTFILES_DIR/settings/vorssaint-settings.plist"
-  [[ "$PROFILE" == macos && -f "$settings" ]] || return 0
-  if (( DRY_RUN )); then note 'Would import Vorssaint preferences'; return 0; fi
+  [[ "$PROFILE" == macos ]] || return 0
+  if [[ -f "$settings" ]]; then
+    if (( DRY_RUN )); then note 'Would import Vorssaint preferences'; else
+      plutil -lint "$settings"
+      (
+        local prefs
+        prefs="$(mktemp)"
+        trap 'rm -f "$prefs"' EXIT
+        plutil -extract settings xml1 -o "$prefs" "$settings"
+        defaults import com.vorssaint.utils "$prefs"
+      )
+    fi
+  fi
+
+  settings="$DOTFILES_DIR/settings/rex-appearance.plist"
+  [[ -f "$settings" ]] || return 0
+  if (( DRY_RUN )); then note 'Would import Rex appearance preferences'; return 0; fi
   plutil -lint "$settings"
-  (
-    local prefs
-    prefs="$(mktemp)"
-    trap 'rm -f "$prefs"' EXIT
-    plutil -extract settings xml1 -o "$prefs" "$settings"
-    defaults import com.vorssaint.utils "$prefs"
-  )
+  defaults import com.superlogical.rex "$settings"
 }
 
 offer_login_shell() {

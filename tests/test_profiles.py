@@ -89,9 +89,6 @@ class ProfilesTest(unittest.TestCase):
                 self.assertEqual((self.home / ".macos").exists(), profile == "macos")
                 self.assertFalse((self.home / "scripts").exists())
                 self.assertFalse((self.home / "settings").exists())
-                self.assertFalse(
-                    (self.home / ".config/cmux/cmux.json.cmux-write.lock").exists()
-                )
                 self.assertIn(
                     f"profile={profile}",
                     (self.home / ".local/state/dotfiles/machine").read_text(),

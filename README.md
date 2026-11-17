@@ -7,9 +7,9 @@ and GNU Stow.
 
 | Profile | Packages and configs |
 | --- | --- |
-| `macos` | `manifests/macos/base.Brewfile`, terminal tools, Mac settings, Ghostty, cmux, and Zed configs |
+| `macos` | `manifests/macos/base.Brewfile`, terminal tools, Mac settings, and configs for Ghostty, Rex, and Zed |
 | `linux-server` | Zsh, completion plugins, Starship, Atuin, fzf, zoxide, eza, bat, dust, fd, ripgrep/rga, Git/delta, lazygit, lazydocker, Neovim, Yazi, and supporting terminal tools |
-| `linux-desktop` | Server tools plus Ghostty, Zed, cmux GUI, Bruno, Helium, Fira Code fonts, and clipboard tools |
+| `linux-desktop` | Server tools plus Ghostty, Zed, Bruno, Helium, Fira Code fonts, and clipboard tools |
 
 Linux supports standard Debian, Ubuntu, Fedora, and Arch-based installations,
 including CachyOS and other derivatives that list `arch` in `/etc/os-release`'s
@@ -20,6 +20,12 @@ existing GUI. It does not install a desktop environment or change system shortcu
 
 Mac packages are defined in `manifests/macos/base.Brewfile`. Zed config is linked on Mac; install the
 Zed app with the development extras group.
+
+The macOS setup imports the curated Rex appearance settings in
+`settings/rex-appearance.plist`, including the selected light and dark themes,
+their custom palettes, and terminal appearance preferences. Rex stores these
+preferences in macOS defaults, so setup imports them instead of linking its
+preferences database. Restart Rex after setup to apply imported settings.
 
 ## Setup
 
@@ -88,8 +94,6 @@ explicit fallback sources are permitted:
   or the `helium-browser-bin` AUR recipe.
 - Bruno: native `.deb`/`.rpm` assets from
   [usebruno/bruno](https://github.com/usebruno/bruno), or `bruno-bin` from AUR.
-- cmux GUI: the official x64 `.deb` from [cmux Linux](https://cmux.com/linux).
-  Other platforms are reported as unavailable. The TUI is not substituted.
 - Docker Desktop: official native packages and dependency repositories from
   [Docker](https://docs.docker.com/desktop/setup/install/linux/), or its AUR recipe.
 - Arch and derivatives: packages missing from configured repositories are
@@ -164,8 +168,7 @@ links from the old dotfiles layout are migrated automatically.
 - `c` and `p` use the local Mac, Wayland, or X11 clipboard. Over SSH, `c` uses
   OSC 52, including tmux passthrough. The terminal and multiplexer must permit it.
   `p` over SSH tells you to paste from your local terminal.
-- Linux Ghostty and Zed configs use Linux keys. The Mac cmux config is not linked
-  to the different Linux GUI app; Linux cmux uses its own defaults.
+- Linux Ghostty and Zed configs use Linux keys.
 - `killport 3000` sends SIGTERM to listeners on port 3000. Use
   `killport --force 3000` to send SIGKILL. Ports must be between 1 and 65535.
 

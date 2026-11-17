@@ -55,8 +55,6 @@ def release_url(source, extension):
             "mkasberg/ghostty-ubuntu",
             rf"ghostty_[^/]+_{deb_arch}_{re.escape(version)}\.deb",
         )
-    if source == "cmux-deb" and machine == "x86_64" and extension == "deb":
-        return "https://cmux.com/api/download/browser-nightly/linux-x64/deb", None
     if source == "docker-desktop" and machine == "x86_64":
         filename = (
             "docker-desktop-amd64.deb"

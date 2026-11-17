@@ -194,7 +194,7 @@ install_fallback() {
   case "$1" in
     copr:*) install_copr "${1#copr:}" "$2" ;;
     helium-apt) install_helium_apt ;;
-    ghostty-deb|cmux-deb|bruno-release) install_release "$1" ;;
+    ghostty-deb|bruno-release) install_release "$1" ;;
     docker-desktop) install_docker_desktop ;;
     *) return 1 ;;
   esac
