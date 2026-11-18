@@ -91,6 +91,36 @@ xcuserdata/
 .env.local
 
 # =============================================================================
+# Credentials & Secrets
+# =============================================================================
+# Private keys & certificates
+*.pem
+*.key
+*.p12
+*.pfx
+*.keystore
+id_rsa
+id_ed25519
+id_ecdsa
+id_dsa
+# Credential & API key stores
+credentials
+credentials.*
+api-keys.*
+api_keys.*
+.netrc
+*.token
+*.token.json
+# Secret config files (exact names; avoids matching source code like redact-secrets.py)
+secrets.yml
+secrets.yaml
+secrets.json
+secrets.toml
+secrets.env
+.webui_secret_key
+webui_secret_key
+
+# =============================================================================
 # Tools
 # =============================================================================
 .specstory/
