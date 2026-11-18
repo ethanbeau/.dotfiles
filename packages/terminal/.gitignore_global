@@ -125,3 +125,6 @@ webui_secret_key
 # =============================================================================
 .specstory/
 .gwtinclude
+
+# Local per-repository notes and plans
+.local-docs/
