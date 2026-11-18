@@ -10,3 +10,32 @@ rex.bind("cmd+shift+h", "pane.split", { direction = "left" })
 rex.bind("cmd+shift+j", "pane.split", { direction = "down" })
 rex.bind("cmd+shift+k", "pane.split", { direction = "up" })
 rex.bind("cmd+shift+l", "pane.split", { direction = "right" })
+
+rex.action{
+  name = "contrast_up",
+  title = "Increase Theme Contrast",
+  run = function()
+    rex.client.queue("client.setting.themes.dark.palette", {
+      value = "Monokai Pro Spectrum High Contrast",
+    })
+    rex.client.queue("client.setting.themes.light.palette", {
+      value = "Monokai Pro Light Sun High Contrast",
+    })
+  end,
+}
+
+rex.action{
+  name = "contrast_down",
+  title = "Decrease Theme Contrast",
+  run = function()
+    rex.client.queue("client.setting.themes.dark.palette", {
+      value = "Monokai Pro Spectrum",
+    })
+    rex.client.queue("client.setting.themes.light.palette", {
+      value = "Monokai Pro Light Sun",
+    })
+  end,
+}
+
+rex.bind("cmd+shift+=", "contrast_up")
+rex.bind("cmd+shift+-", "contrast_down")
