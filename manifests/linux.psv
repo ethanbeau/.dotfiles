@@ -49,7 +49,6 @@ development|volta|volta|volta|volta|-|-|volta-bin
 development|markdownlint|markdownlint-cli2|markdownlint-cli2|markdownlint-cli2|-|-|-
 development|vite-plus|vite-plus|vite-plus|vite-plus|-|-|-
 development|gh|gh|gh|github-cli|-|-|-
-development|linear|linear-cli|linear-cli|linear-cli|-|-|-
 development|watchman|watchman|watchman|watchman|-|-|-
 containers|docker-desktop|docker-desktop|docker-desktop|docker-desktop|docker-desktop|docker-desktop|docker-desktop
 utilities|ffmpeg|ffmpeg|ffmpeg-free|ffmpeg|-|-|-

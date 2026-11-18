@@ -64,7 +64,7 @@ to see the offer again. Noninteractive runs never call `chsh`.
 
 | Group | Linux | macOS |
 | --- | --- | --- |
-| `development` | Rust/Cargo, uv, Python, Node/npm, Volta, markdownlint, Vite+, gh, Linear CLI, Watchman | gh, Rust, uv, Vite+, Linear CLI, Watchman, Bruno, Zed; default runtimes stay in `manifests/macos/base.Brewfile` |
+| `development` | Rust/Cargo, uv, Python, Node/npm, Volta, markdownlint, Vite+, gh, Watchman | gh, Rust, uv, Vite+, Watchman, Markdown Preview, Bruno, Zed; default runtimes stay in `manifests/macos/base.Brewfile` |
 | `containers` | Docker Desktop on GUI machines | Docker Desktop |
 | `utilities` | FFmpeg, wget | FFmpeg, wget, GrandPerspective, mactop, Fira Code, Helium |
 
