@@ -59,7 +59,7 @@ preflight_links() {
     if [[ -L "$target" ]]; then
       if is_stale_package_link "$target" "${LINK_PACKAGES[i]}" "$relative"; then
         continue
-      elif [[ ! -d "$source" ]] && { link_points_to "$target" "$source" || previous_link "$target"; }; then
+      elif [[ -L "$source" || ! -d "$source" ]] && { link_points_to "$target" "$source" || previous_link "$target"; }; then
         continue
       fi
       printf 'Conflict: target is a symlink: %s -> %s\n' "$target" "$(readlink "$target")" >&2

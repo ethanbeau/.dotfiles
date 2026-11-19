@@ -94,6 +94,19 @@ class ProfilesTest(unittest.TestCase):
                     (self.home / ".local/state/dotfiles/machine").read_text(),
                 )
 
+    def test_t3_theme_directory_survives_restow(self):
+        self.cli("linux-desktop")
+        self.cli("linux-desktop")
+        themes = self.home / ".t3/userdata/themes"
+        self.assertTrue(themes.is_symlink())
+        theme = themes / "monokai-pro.json"
+        self.assertFalse(theme.is_symlink())
+        fd = os.open(theme, os.O_RDONLY | os.O_NOFOLLOW)
+        os.close(fd)
+        self.assertTrue((self.home / ".t3/userdata/keybindings.json").is_symlink())
+        self.cli("linux-server")
+        self.assertFalse(themes.exists())
+
     def test_previous_layout_links_are_migrated(self):
         old_repo = self.home / ".dotfiles"
         old_repo.symlink_to(self.checkout, target_is_directory=True)

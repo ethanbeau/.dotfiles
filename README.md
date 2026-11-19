@@ -22,7 +22,8 @@ Mac packages are defined in `manifests/macos/base.Brewfile`. Zed config is linke
 Zed app with the development extras group.
 
 The desktop profile includes T3 Code keybindings and custom themes in
-`packages/desktop/.t3`. T3 settings and provider configuration remain local.
+`packages/desktop/.t3` and `settings/t3-themes`. T3 settings and provider
+configuration remain local. Select the theme in T3 after setup.
 
 The macOS setup imports the curated Rex appearance settings in
 `settings/rex-appearance.plist`, including the selected light and dark themes,
@@ -132,7 +133,8 @@ Linux wrappers in `~/.local/bin`.
 Native Neovim packages older than 0.11.2 use basic editor settings instead of
 loading incompatible LazyVim plugins. See [LazyVim requirements](https://www.lazyvim.org/).
 
-Stow links individual files from `packages/` and keeps real config directories.
+Stow links individual files from `packages/` and keeps real config directories,
+except for the T3 themes directory, which is linked as a whole so T3 can load it.
 Profile changes check the new targets before they unstow the saved profile and
 install the selected profile's links. If linking fails, the command restores the
 previous files, links, and adopted checkout contents. The saved profile stays
