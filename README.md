@@ -21,6 +21,9 @@ existing GUI. It does not install a desktop environment or change system shortcu
 Mac packages are defined in `manifests/macos/base.Brewfile`. Zed config is linked on Mac; install the
 Zed app with the development extras group.
 
+The desktop profile includes T3 Code keybindings and custom themes in
+`packages/desktop/.t3`. T3 settings and provider configuration remain local.
+
 The macOS setup imports the curated Rex appearance settings in
 `settings/rex-appearance.plist`, including the selected light and dark themes,
 their custom palettes, and terminal appearance preferences. Rex stores these
