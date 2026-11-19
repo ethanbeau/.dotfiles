@@ -46,5 +46,12 @@
     "bindings": {
       "j k": "vim::NormalBefore"
     }
+  },
+  {
+    "use_key_equivalents": true,
+    "bindings": {
+      "cmd-_": ["task::Spawn", { "task_name": "Theme contrast down" }],
+      "cmd-+": ["task::Spawn", { "task_name": "Theme contrast up" }]
+    }
   }
 ]

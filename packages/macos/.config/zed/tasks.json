@@ -1,0 +1,34 @@
+[
+  {
+    "label": "Theme contrast down",
+    "command": "python3",
+    "args": [
+      "\"${XDG_CONFIG_HOME:-$HOME/.config}/zed/contrast.py\"",
+      "down"
+    ],
+    "cwd": "/",
+    "reveal": "never",
+    "hide": "on_success",
+    "show_summary": false,
+    "show_command": false,
+    "shell": {
+      "program": "/bin/sh"
+    }
+  },
+  {
+    "label": "Theme contrast up",
+    "command": "python3",
+    "args": [
+      "\"${XDG_CONFIG_HOME:-$HOME/.config}/zed/contrast.py\"",
+      "up"
+    ],
+    "cwd": "/",
+    "reveal": "never",
+    "hide": "on_success",
+    "show_summary": false,
+    "show_command": false,
+    "shell": {
+      "program": "/bin/sh"
+    }
+  }
+]
